@@ -1,0 +1,35 @@
+name: Build and Publish Conda Package
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    name: Build and Publish Conda Package
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-minor-version: [12] # Only Python 3.12
+
+    steps:
+      # ✅ Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ✅ Step 2: Build and publish Conda package
+      - name: Build and Publish Conda Package
+        uses: openalea/action-build-publish-anaconda@v0.1.5
+        with:
+          conda: conda
+          mamba: false
+          python: ${{ matrix.python-minor-version }}
+          numpy: '22' # Optional; works with Python version
+          channels: bioconda,conda-forge,defaults
+          token: ${{ secrets.ANACONDA_TOKEN }}
+          publish: true
+          label: main

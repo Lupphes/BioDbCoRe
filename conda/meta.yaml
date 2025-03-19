@@ -1,0 +1,52 @@
+package:
+  name: biodbcore
+  version: "0.1.0"
+
+source:
+  path: ..
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - python=3.12
+    - pip
+    - setuptools
+  run:
+    - python=3.12
+    - pandas=2.2.3
+    - setuptools
+    - conda-forge::certifi=2024.12.14
+    - conda-forge::charset-normalizer=3.4.1
+    - conda-forge::idna=3.10
+    - conda-forge::numpy=2.2.2
+    - conda-forge::pyarrow=19.0.0
+    - conda-forge::python-dateutil=2.9.0.post0
+    - conda-forge::pytz=2024.2
+    - conda-forge::requests=2.32.3
+    - conda-forge::six=1.17.0
+    - conda-forge::tqdm=4.67.1
+    - conda-forge::urllib3=2.3.0
+
+test:
+  commands:
+    - biodbcore --help
+
+about:
+  home: https://github.com/Lupphes/BioDbCoRe
+  license: MIT
+  summary: "BioDbCoRe - Biological Database Core Tool"
+  description: |
+    BioDbCoRe is a tool for managing and analyzing biological database content. 
+    It can retrieve, process, and analyze genome data from public repositories, 
+    allowing efficient and automated handling of large-scale genomic data.
+  doc_url: https://github.com/Lupphes/biodbcore
+  dev_url: https://github.com/Lupphes/biodbcore
+
+extra:
+  channels:
+    - conda-forge
+    - defaults

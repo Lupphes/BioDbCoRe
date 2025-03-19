@@ -172,3 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+data/
+*.parquet
+4932/
+assembly_summary_refseq.txt
+test/

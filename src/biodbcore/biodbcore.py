@@ -4,8 +4,7 @@ import argparse
 import os
 import json
 
-from seq_retriver.pipeline import Pipeline
-
+from .db import Pipeline
 
 def parse_args():
     """

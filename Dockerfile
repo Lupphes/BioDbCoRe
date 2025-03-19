@@ -12,17 +12,14 @@ RUN apt-get update && \
     apt-get install -y curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install dependencies
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the entire source code into the container
+COPY . /app
 
-# Copy the source code into the container
-COPY seq_retriver/ /app/seq_retriver/
-COPY main.py /app/main.py
-RUN chmod +x /app/main.py
+# Install the package using setup.py
+RUN pip install --no-cache-dir .
 
 # Set working directory where Nextflow will operate
 WORKDIR /data
 
-# Define the entrypoint (optional — useful for debugging)
-ENTRYPOINT ["python", "/app/main.py"]
+# Define the entry point (direct reference to the console script defined in setup.py)
+ENTRYPOINT ["biodbcore"]
