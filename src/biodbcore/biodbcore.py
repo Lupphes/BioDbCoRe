@@ -35,7 +35,7 @@ def parse_args():
 
     # Arguments for RefSeq genome download
     parser.add_argument(
-        "--genome_file",
+        "--reference_genome",
         default=None,
         type=str,
         help="Path local reference genome (optional)",
@@ -49,7 +49,7 @@ def parse_args():
         help="Reference ungapped genome size (required for 'ena' mode)",
     )
     parser.add_argument(
-        "--sequences_dir",
+        "--sequence_dir",
         default=None,
         type=str,
         help="Path to the local downloaded sequences (optional)",
@@ -112,7 +112,7 @@ def main():
     results = pipeline.run()
     if results:
         save_results_as_json(
-            results, f"{args.outdir}/{args.taxonomy_id}", args.mode
+            results, f"{args.outdir}", args.mode
         )
 
 

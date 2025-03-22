@@ -18,16 +18,16 @@ class Pipeline:
         taxonomy_id: int,
         outdir: str,
         mode: str,
-        genome_file: str = None,
-        sequences_dir: str = None,
+        reference_genome: str = None,
+        sequence_dir: str = None,
         genome_size_ungapped: int = None,
         **kwargs,
     ):
         self.taxonomy_id = taxonomy_id
         self.outdir = os.path.abspath(outdir)
         self.mode = mode
-        self.genome_file = genome_file
-        self.sequences_dir = sequences_dir
+        self.reference_genome = reference_genome
+        self.sequence_dir = sequence_dir
         self.genome_size_ungapped = genome_size_ungapped
 
         os.makedirs(self.outdir, exist_ok=True)
@@ -67,54 +67,54 @@ class Pipeline:
             self.genome_size_ungapped = refseq_results.get(
                 "genome_size_ungapped", self.genome_size_ungapped
             )
-            self.genome_file = refseq_results.get("genome_file", self.genome_file)
+            self.reference_genome = refseq_results.get("reference_genome", self.reference_genome)
             self.run_ena()
         else:
             raise ValueError(f"Unsupported mode: {self.mode}")
 
     def run_refseq(self) -> dict[str, str]:
         """Fetches the reference genome from RefSeq."""
-        if self.genome_file:
-            print(f"Using local reference genome: {self.genome_file}")
+        if self.reference_genome:
+            print(f"Using local reference genome: {self.reference_genome}")
             self.genome_size, self.genome_size_ungapped = (
-                self.calculate_genome_size_from_file(self.genome_file)
+                self.calculate_genome_size_from_file(self.reference_genome)
             )
         else:
             print("Fetching RefSeq genome data...")
-            self.genome_file, self.genome_size, self.genome_size_ungapped = (
+            self.reference_genome, self.genome_size, self.genome_size_ungapped = (
                 self.refseq_retriver.get_refseq_genomes(self.taxonomy_id)
             )
 
         print(f"Genome size: {self.genome_size} bp")
         print(f"Ungapped genome size: {self.genome_size_ungapped} bp")
-        print(f"RefSeq genome saved to: {self.genome_file}")
+        print(f"RefSeq genome saved to: {self.reference_genome}")
 
-        # relative_genome_file_path = os.path.relpath(self.genome_file, start=os.path.dirname(self.outdir))
+        # relative_reference_genome_path = os.path.relpath(self.reference_genome, start=os.path.dirname(self.outdir))
 
         return {
-            "genome_file": self.genome_file,
+            "reference_genome": self.reference_genome,
             "genome_size": self.genome_size,
             "genome_size_ungapped": self.genome_size_ungapped,
         }
 
     def run_ena(self):
         """Executes the ENA search and FASTQ file download pipeline."""
-        if self.sequences_dir:
+        if self.sequence_dir:
             # If user provided a local directory, we skip downloading
-            print(f"Using local sequences from directory: {self.sequences_dir}")
-            files = self.list_sequence_files(self.sequences_dir)
-            return {"sequences_dir": self.sequences_dir, "sequence_files": files}
+            print(f"Using local sequences from directory: {self.sequence_dir}")
+            files = self.list_sequence_files(self.sequence_dir)
+            return {"sequence_dir": self.sequence_dir, "sequence_files": files}
         else:
-            self.sequences_dir = os.path.join(
+            self.sequence_dir = os.path.join(
                 self.outdir,
                 str(self.taxonomy_id),
                 "sequences"
             )
 
         print("Searching for sequence data in ENA...")
-        # If no genome_size_ungapped is provided, or the user gave us a genome_file:
-        if not self.genome_size_ungapped and self.genome_file:
-            self.genome_size, self.genome_size_ungapped = self.calculate_genome_size_from_file(self.genome_file)
+        # If no genome_size_ungapped is provided, or the user gave us a reference_genome:
+        if not self.genome_size_ungapped and self.reference_genome:
+            self.genome_size, self.genome_size_ungapped = self.calculate_genome_size_from_file(self.reference_genome)
         elif self.genome_size_ungapped:
             print(f"Using provided ungapped genome size: {self.genome_size_ungapped}")
         else:
@@ -123,20 +123,20 @@ class Pipeline:
         sequence_data = self.ena_searcher.search_sequence_data(genome_size_ungapped=self.genome_size_ungapped)
         if not sequence_data:
             print("No sequence data found.")
-            return {"sequences_dir": self.sequences_dir, "sequence_data": []}
+            return {"sequence_dir": self.sequence_dir, "sequence_data": []}
 
         print("Downloading FASTQ files...")
         # We now capture the returned dict {run_accession -> list of file paths}
-        run_accession_to_files = self.ena_searcher.fetch_fastq_files(sequence_data, self.sequences_dir)
+        run_accession_to_files = self.ena_searcher.fetch_fastq_files(sequence_data, self.sequence_dir)
 
         # Optionally, you can still call list_sequence_files if you want a quick flat listing
         # But your main structure is in run_accession_to_files
-        # This list won't show the pairing, just the total files in self.sequences_dir
-        all_downloaded = self.list_sequence_files(self.sequences_dir, print_files=False)
+        # This list won't show the pairing, just the total files in self.sequence_dir
+        all_downloaded = self.list_sequence_files(self.sequence_dir, print_files=False)
 
         # Return both the base directory and the run-accession->files mapping
         return {
-            "sequences_dir": self.sequences_dir,
+            "sequence_dir": self.sequence_dir,
             "run_accession_to_files": run_accession_to_files,
             "all_files_flat": all_downloaded
         }
@@ -167,16 +167,16 @@ class Pipeline:
         return file_paths
 
 
-    def calculate_genome_size_from_file(self, genome_file: str) -> tuple[int, int]:
+    def calculate_genome_size_from_file(self, reference_genome: str) -> tuple[int, int]:
         """Calculates genome size by summing sequence lengths from a genome file (handles both .gz and plain text)."""
         genome_size = 0
         genome_size_ungapped = 0
 
         # Determine if file is gzipped
-        open_func = gzip.open if genome_file.endswith(".gz") else open
+        open_func = gzip.open if reference_genome.endswith(".gz") else open
 
         with open_func(
-            genome_file, "rt", encoding="utf-8"
+            reference_genome, "rt", encoding="utf-8"
         ) as f:  # 'rt' ensures reading text mode
             for line in f:
                 if not line.startswith(">"):

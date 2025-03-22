@@ -30,11 +30,10 @@ class RefSeqRetriver:
         the assembly summary file.
 
         Returns:
-        - tuple: (genome_file_path, genome_size, genome_size_ungapped)
+        - tuple: (reference_genome_path, genome_size, genome_size_ungapped)
         """
         # Prepare tax-specific directory
-        tax_dir = os.path.join(self.outdir, str(taxonomy_id), "refseq")
-        os.makedirs(tax_dir, exist_ok=True)
+        os.makedirs(self.outdir, exist_ok=True)
 
         # Download the assembly summary if needed
         if not os.path.exists(self.assembly_summary_path) or redownload:
@@ -64,18 +63,18 @@ class RefSeqRetriver:
         full_path = f"{first_genome_path}/{annotation_name}_{file_name}"
 
         # Local genome path
-        genome_file_path = os.path.join(tax_dir, os.path.basename(full_path))
+        reference_genome_path = os.path.join(self.outdir, os.path.basename(full_path))
 
         # If the genome file doesn't exist locally, download it
-        if os.path.exists(genome_file_path):
+        if os.path.exists(reference_genome_path):
             print(
-                f"Genome file already exists at {genome_file_path}. Skipping download."
+                f"Genome file already exists at {reference_genome_path}. Skipping download."
             )
         else:
-            self._download_genome_file(full_path, genome_file_path)
+            self._download_reference_genome(full_path, reference_genome_path)
 
         return (
-            genome_file_path,
+            reference_genome_path,
             filtered_df.iloc[0]["genome_size"],
             filtered_df.iloc[0]["genome_size_ungapped"],
         )
@@ -163,7 +162,7 @@ class RefSeqRetriver:
             df.to_parquet(self.parsed_dataframe_path, index=False)
             return df
 
-    def _download_genome_file(self, url: str, output_path: str):
+    def _download_reference_genome(self, url: str, output_path: str):
         """
         Download a single genome file from the given URL to output_path.
         """
