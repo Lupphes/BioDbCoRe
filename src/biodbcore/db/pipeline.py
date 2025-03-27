@@ -105,11 +105,7 @@ class Pipeline:
             files = self.list_sequence_files(self.sequence_dir)
             return {"sequence_dir": self.sequence_dir, "sequence_files": files}
         else:
-            self.sequence_dir = os.path.join(
-                self.outdir,
-                str(self.taxonomy_id),
-                "sequences"
-            )
+            self.sequence_dir = self.outdir
 
         print("Searching for sequence data in ENA...")
         # If no genome_size_ungapped is provided, or the user gave us a reference_genome:

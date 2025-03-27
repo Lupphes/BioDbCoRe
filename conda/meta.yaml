@@ -1,6 +1,6 @@
 package:
   name: biodbcore
-  version: "0.1.1"
+  version: "0.1.3"
 
 source:
   path: ..
@@ -12,20 +12,20 @@ build:
 
 requirements:
   host:
-    - python=3.12
+    - python >=3.10,<3.13
     - pip
     - setuptools
   run:
-    - python=3.12
-    - pandas=2.2.3
+    - python >=3.10,<3.13
+    - pandas=2.2.4
     - setuptools
-    - conda-forge::certifi=2024.12.14
+    - conda-forge::certifi=2025.1.31
     - conda-forge::charset-normalizer=3.4.1
     - conda-forge::idna=3.10
-    - conda-forge::numpy=2.2.2
+    - conda-forge::numpy=2.2.4
     - conda-forge::pyarrow=19.0.0
     - conda-forge::python-dateutil=2.9.0.post0
-    - conda-forge::pytz=2024.2
+    - conda-forge::pytz=2025.2
     - conda-forge::requests=2.32.3
     - conda-forge::six=1.17.0
     - conda-forge::tqdm=4.67.1
