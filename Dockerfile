@@ -20,6 +20,3 @@ RUN pip install --no-cache-dir .
 
 # Set working directory where Nextflow will operate
 WORKDIR /data
-
-# Define the entry point (direct reference to the console script defined in setup.py)
-CMD ["biodbcore"]
