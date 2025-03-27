@@ -7,9 +7,9 @@ ENV PYTHONUNBUFFERED=1
 # Set working directory inside the container
 WORKDIR /app
 
-# Install system dependencies (if needed)
+# Install bash and curl (and clean up after to keep the image small)
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y bash curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the entire source code into the container
