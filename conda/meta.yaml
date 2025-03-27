@@ -25,7 +25,7 @@ requirements:
     - conda-forge::numpy=2.2.4
     - conda-forge::pyarrow=19.0.0
     - conda-forge::python-dateutil=2.9.0.post0
-    - conda-forge::pytz=2025.2
+    - conda-forge::pytz=2024.1
     - conda-forge::requests=2.32.3
     - conda-forge::six=1.17.0
     - conda-forge::tqdm=4.67.1

@@ -10,7 +10,7 @@ setup(
         "numpy==2.2.4",
         "pyarrow==19.0.0",
         "python-dateutil==2.9.0.post0",
-        "pytz==2025.2",
+        "pytz==2024.1",
         "requests==2.32.3",
         "tqdm==4.67.1",
         "urllib3==2.3.0",
