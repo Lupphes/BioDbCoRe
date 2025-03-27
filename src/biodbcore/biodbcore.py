@@ -4,7 +4,7 @@ import argparse
 import os
 import json
 
-from db import Pipeline
+from .db import Pipeline
 
 def parse_args():
     """
