@@ -22,4 +22,4 @@ RUN pip install --no-cache-dir .
 WORKDIR /data
 
 # Define the entry point (direct reference to the console script defined in setup.py)
-ENTRYPOINT ["biodbcore"]
+CMD ["biodbcore"]
